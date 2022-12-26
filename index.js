@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const jsonwebtoken = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
@@ -12,10 +12,33 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.USER_DB}:${process.env.USER_PASSWORD}@cluster0.uvhk0wp.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
+async function run() {
+    try {
+        const allFoodCollection = client.db('asian_dine').collection('allFoodCollections')
+
+        app.get('/foodList', async (req, res) => {
+            const query = {};
+            const foodList = await allFoodCollection.find(query).toArray();
+            // console.log(foodList);
+            res.send(foodList)
+        })
+
+        app.get('/foodList/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await allFoodCollection.find(query).toArray();
+            console.log(result);
+            res.send(result)
+        })
 
 
+    }
+    finally {
 
+    }
 
+}
+run().catch(console.log())
 
 
 
