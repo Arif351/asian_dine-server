@@ -15,13 +15,14 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const allFoodCollection = client.db('asian_dine').collection('allFoodCollections')
+        const timeSlotsCollection = client.db('asian_dine').collection('timeSlots')
 
         app.get('/foodList', async (req, res) => {
             const query = {};
             const foodList = await allFoodCollection.find(query).toArray();
             // console.log(foodList);
             res.send(foodList)
-        })
+        });
 
         app.get('/foodList/:id', async (req, res) => {
             const id = req.params.id;
@@ -29,7 +30,15 @@ async function run() {
             const result = await allFoodCollection.find(query).toArray();
             console.log(result);
             res.send(result)
-        })
+        });
+
+        app.get('/time', async (req, res) => {
+            const query = {};
+            const timeList = await timeSlotsCollection.find(query).toArray();
+            console.log(timeList);
+            res.send(timeList)
+        });
+
 
 
     }
