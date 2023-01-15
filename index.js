@@ -14,8 +14,10 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run() {
     try {
-        const allFoodCollection = client.db('asian_dine').collection('allFoodCollections')
-        const timeSlotsCollection = client.db('asian_dine').collection('timeSlots')
+        const allFoodCollection = client.db('asian_dine').collection('allFoodCollections');
+        const timeSlotsCollection = client.db('asian_dine').collection('timeSlots');
+        const bookingCollection = client.db('asian_dine').collection('bookings');
+        const usersCollection = client.db('asian_dine').collection('users');
 
         app.get('/foodList', async (req, res) => {
             const query = {};
@@ -39,6 +41,35 @@ async function run() {
             res.send(timeList)
         });
 
+        app.get('/bookings', async (req, res) => {
+            const email = req.query.email;
+            console.log(email);
+            const query = { email: email };
+            const bookings = await bookingCollection.find(query).toArray();
+            console.log(bookings);
+            res.send(bookings)
+        })
+
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body;
+            console.log(booking);
+            const result = await bookingCollection.insertOne(booking);
+            res.send(result)
+        });
+
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const bookings = await usersCollection.find(query).toArray();
+            console.log(bookings);
+            res.send(bookings)
+        })
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            console.log(result);
+            res.send(result)
+        })
 
 
     }
